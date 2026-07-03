@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Model Comp Card</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+body{
+    background:#f6f6f6;
+    padding:20px;
+    overflow-x:auto;
+}
+
+.container{
+    width:1200px;
+    margin:0 auto;
+}
+
+.card{
+    background:#fff;
+    border:2px solid #ddd;
+    border-radius:35px;
+    padding:40px;
+    display:grid;
+    grid-template-columns:1.1fr .95fr;
+    gap:40px;
+    margin-bottom:40px;
+}
+
+.left{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.photo{
+    background:#ddd;
+    border-radius:8px;
+    cursor:pointer;
+    position:relative;
+    overflow:hidden;
+}
+
+.photo span{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    color:#666;
+    font-size:30px;
+    font-weight:600;
+    pointer-events:none;
+}
+
+.photo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:none;
+}
+
+.large{
+    grid-column:1 / 3;
+    height:360px;
+}
+
+.small{
+    height:230px;
+}
+
+.right{
+    display:flex;
+    flex-direction:column;
+}
+
+.portrait{
+    height:480px;
+    margin-bottom:28px;
+}
+
+.info h1{
+    font-size:54px;
+    font-weight:800;
+    margin-bottom:18px;
+}
+
+.info h1 span{
+    font-size:40px;
+    font-weight:500;
+}
+
+.info table{
+    border-collapse:collapse;
+    font-size:27px;
+    color:#555;
+}
+
+.info td{
+    padding:4px 18px 4px 0;
+}
+
+.form-area{
+    background:#fff;
+    border-radius:25px;
+    padding:35px;
+}
+
+.form-title{
+    font-size:30px;
+    font-weight:700;
+    margin-bottom:25px;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.input-group{
+    display:flex;
+    flex-direction:column;
+}
+
+.input-group label{
+    margin-bottom:8px;
+    font-weight:600;
+    color:#444;
+}
+
+.input-group input{
+    height:50px;
+    padding:0 15px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    font-size:17px;
+}
+
+button{
+    width:200px;
+    height:52px;
+    margin-top:30px;
+    border:none;
+    border-radius:12px;
+    background:#111;
+    color:#fff;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.hidden{
+    display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="left">
+
+<div class="photo large" onclick="pickImage('img1')">
+<span>+ 사진선택</span>
+<img id="img1">
+</div>
+
+<div class="photo small" onclick="pickImage('img2')">
+<span>+ 사진선택</span>
+<img id="img2">
+</div>
+
+<div class="photo small" onclick="pickImage('img3')">
+<span>+ 사진선택</span>
+<img id="img3">
+</div>
+
+</div>
+
+<div class="right">
+
+<div class="photo portrait" onclick="pickImage('img4')">
+<span>+ 사진선택</span>
+<img id="img4">
+</div>
+
+<div class="info">
+
+<h1 id="name">
+KIM HANA <span>김하나</span>
+</h1>
+
+<table>
+<tr><td>HEIGHT</td><td id="height">172 cm</td></tr>
+<tr><td>WEIGHT</td><td id="weight">50 kg</td></tr>
+<tr><td>SHOES</td><td id="shoes">245 mm</td></tr>
+<tr><td>TEL</td><td id="tel">010 1234 1234</td></tr>
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="form-area">
+
+<div class="form-title">모델 정보 입력</div>
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>영문 이름</label>
+<input id="engName" placeholder="KIM HANA">
+</div>
+
+<div class="input-group">
+<label>한글 이름</label>
+<input id="korName" placeholder="김하나">
+</div>
+
+<div class="input-group">
+<label>키</label>
+<input id="heightInput" placeholder="172 cm">
+</div>
+
+<div class="input-group">
+<label>몸무게</label>
+<input id="weightInput" placeholder="50 kg">
+</div>
+
+<div class="input-group">
+<label>신발</label>
+<input id="shoesInput" placeholder="245 mm">
+</div>
+
+<div class="input-group">
+<label>전화번호</label>
+<input id="telInput" placeholder="010 1234 1234">
+</div>
+
+</div>
+
+<button onclick="applyInfo()">적용하기</button>
+
+<input id="filePicker" class="hidden" type="file" accept="image/*">
+
+</div>
+
+</div>
+
+<script>
+let targetImage=null;
+
+function pickImage(id){
+    targetImage=document.getElementById(id);
+    document.getElementById("filePicker").click();
+}
+
+document.getElementById("filePicker").addEventListener("change",function(e){
+
+    const file=e.target.files[0];
+    if(!file || !targetImage) return;
+
+    const reader=new FileReader();
+
+    reader.onload=function(ev){
+        targetImage.src=ev.target.result;
+        targetImage.style.display="block";
+        targetImage.previousElementSibling.style.display="none";
+    }
+
+    reader.readAsDataURL(file);
+
+    this.value="";
+});
+
+function applyInfo(){
+
+    document.getElementById("name").innerHTML=
+        (document.getElementById("engName").value||"KIM HANA")
+        +" <span>"+
+        (document.getElementById("korName").value||"김하나")
+        +"</span>";
+
+    document.getElementById("height").innerText=document.getElementById("heightInput").value||"172 cm";
+    document.getElementById("weight").innerText=document.getElementById("weightInput").value||"50 kg";
+    document.getElementById("shoes").innerText=document.getElementById("shoesInput").value||"245 mm";
+    document.getElementById("tel").innerText=document.getElementById("telInput").value||"010 1234 1234";
+}
+</script>
+
+</body>
+</html>
